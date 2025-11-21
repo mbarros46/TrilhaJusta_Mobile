@@ -14,7 +14,10 @@ interface AuthContextData {
   usuario: Usuario | null;
   loading: boolean;
   login: (email: string, senha: string) => Promise<void>;
-  register: (nome: string, email: string, senha: string) => Promise<void>;
+  register: (nome: string, email: string, senha: string, cidade?: string, uf?: string) => Promise<void>;
+  loginDev: (email: string) => Promise<void>;
+  registerDev: (nome: string, email: string) => Promise<void>;
+  // cidade and uf are optional and forwarded to the backend during registration
   logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
@@ -75,10 +78,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  async function register(nome: string, email: string, senha: string) {
+  async function loginDev(email: string) {
     try {
       setLoading(true);
-      const response = await registerService(nome, email, senha);
+      const mockToken = `dev-token-${Math.random().toString(36).slice(2, 10)}`;
+      const usuario = { id: String(Math.floor(Math.random() * 1000000)), nome: email.split('@')[0] || 'Dev', email };
+      await AsyncStorage.setItem('@FleetZone:token', mockToken);
+      await AsyncStorage.setItem('@FleetZone:user', JSON.stringify(usuario));
+      setAuthToken(mockToken);
+      setToken(mockToken);
+      setUsuario(usuario);
+    } catch (error) {
+      console.error('Erro no loginDev:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function register(nome: string, email: string, senha: string, cidade?: string, uf?: string) {
+    try {
+      setLoading(true);
+      const response = await registerService(nome, email, senha, cidade ?? '', uf ?? '');
       
       const { token: authToken, usuario: authUsuario } = response;
 
@@ -90,6 +111,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   setAuthToken(authToken);
       setUsuario(authUsuario);
     } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function registerDev(nome: string, email: string) {
+    try {
+      setLoading(true);
+      const mockToken = `dev-token-${Math.random().toString(36).slice(2, 10)}`;
+      const usuario = { id: String(Math.floor(Math.random() * 1000000)), nome: nome || email.split('@')[0] || 'Dev', email };
+      await AsyncStorage.setItem('@FleetZone:token', mockToken);
+      await AsyncStorage.setItem('@FleetZone:user', JSON.stringify(usuario));
+      setAuthToken(mockToken);
+      setToken(mockToken);
+      setUsuario(usuario);
+    } catch (error) {
+      console.error('Erro no registerDev:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -118,6 +157,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         loading,
         login,
         register,
+        loginDev,
+        registerDev,
         logout,
         isAuthenticated,
       }}

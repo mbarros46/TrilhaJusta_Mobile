@@ -12,7 +12,6 @@ import {
 import { useRouter } from 'expo-router';
 import AppButton from '../../src/components/AppButton';
 import { useAuth } from '../../src/contexts';
-import { register as registerService } from '../../src/services/authService';
 
 export default function RegisterScreen() {
   const [nome, setNome] = useState('');
@@ -22,7 +21,7 @@ export default function RegisterScreen() {
   const [uf, setUf] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth();
+  const { register, registerDev } = useAuth();
 
   async function handleRegister() {
     if (!nome || !email || !senha || !cidade || !uf) {
@@ -31,12 +30,32 @@ export default function RegisterScreen() {
     }
     try {
       setLoading(true);
-      const { token, usuario } = await registerService(nome, email, senha, cidade, uf);
-      await login(email, senha); // garante contexto sincronizado
+  await register(nome, email, senha, cidade, uf);
       Alert.alert('Cadastro realizado', 'Conta criada com sucesso!');
       router.replace('/(tabs)');
     } catch (err: any) {
-      Alert.alert('Erro ao cadastrar', err?.message || 'Tente novamente.');
+        console.error('Erro no cadastro:', err);
+        const msg = err?.message || 'Tente novamente.';
+        // Se for erro de timeout / rede, oferecer modo dev
+        if (msg.toLowerCase().includes('timeout') || msg.toLowerCase().includes('network')) {
+          Alert.alert('Erro ao cadastrar', `${msg}`, [
+            { text: 'Cancelar', style: 'cancel' },
+            {
+              text: 'Continuar em modo dev',
+              onPress: async () => {
+                try {
+                  await registerDev(nome, email);
+                  Alert.alert('Cadastro (dev)', 'Entrando em modo desenvolvimento');
+                  router.replace('/(tabs)');
+                } catch (e) {
+                  Alert.alert('Erro', 'Não foi possível entrar em modo dev.');
+                }
+              },
+            },
+          ]);
+        } else {
+          Alert.alert('Erro ao cadastrar', msg);
+        }
     } finally {
       setLoading(false);
     }

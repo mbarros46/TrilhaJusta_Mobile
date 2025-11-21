@@ -15,11 +15,3 @@ declare global {
     interface RootParamList extends RootStackParamList {}
   }
 }
-
-// Nota: este arquivo contém apenas tipos TypeScript. Mantemos um default export
-// que renderiza `null` para satisfazer o expo-router em builds web.
-import React from 'react';
-
-export default function _TypesPlaceholder() {
-  return null;
-}

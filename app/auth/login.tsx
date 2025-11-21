@@ -18,7 +18,7 @@ export default function LoginScreen() {
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, loginDev } = useAuth();
 
   async function handleLogin() {
     if (!email || !senha) {
@@ -30,7 +30,25 @@ export default function LoginScreen() {
       await login(email, senha);
       router.replace('/(tabs)');
     } catch (err: any) {
-      Alert.alert('Erro ao entrar', err?.message || 'Tente novamente.');
+        const msg = err?.message || 'Tente novamente.';
+        if (msg.toLowerCase().includes('timeout') || msg.toLowerCase().includes('network')) {
+          Alert.alert('Erro ao entrar', msg, [
+            { text: 'Cancelar', style: 'cancel' },
+            {
+              text: 'Entrar em modo dev',
+              onPress: async () => {
+                try {
+                  await loginDev(email);
+                  router.replace('/(tabs)');
+                } catch (e) {
+                  Alert.alert('Erro', 'Não foi possível entrar em modo dev.');
+                }
+              },
+            },
+          ]);
+        } else {
+          Alert.alert('Erro ao entrar', msg);
+        }
     } finally {
       setLoading(false);
     }
