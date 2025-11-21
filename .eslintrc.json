@@ -1,0 +1,25 @@
+{
+  "extends": ["@react-native", "prettier"],
+  "plugins": ["import"],
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc" },
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ]
+      }
+    ],
+    "import/no-unresolved": "off",
+    "import/namespace": "off",
+    "react/no-unstable-nested-components": ["warn", { "allowAsProps": true }]
+  },
+  "ignorePatterns": ["node_modules/", "dist/", "build/", ".expo/"]
+}

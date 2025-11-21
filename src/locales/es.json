@@ -1,0 +1,75 @@
+{
+  "home": {
+    "title": "Bienvenido a FleetZone",
+    "subtitle": "Administra tus flotas fácilmente"
+  },
+  
+  "about": {
+    "title": "Acerca de la aplicación",
+    "description": "FleetZone te ayuda a monitorear, administrar y optimizar flotas de motocicletas de manera eficiente e intuitiva."
+  }
+  ,
+  "stats": {
+    "active_motos": "Motos activas",
+    "available": "Disponibles",
+    "maintenance": "Mantenimiento"
+  },
+  "buttons": {
+    "view_motos": "Ver Motos",
+    "create_moto": "Nueva Moto",
+    "settings": "Configuraciones",
+    "language_pt": "Portugués",
+    "language_es": "Español",
+    "edit": "Editar",
+    "save": "Guardar",
+    "delete": "Eliminar"
+  },
+  "auth": {
+    "test_section": "Autenticación (Para pruebas)",
+    "login": "Login",
+    "register": "Registro"
+  },
+  "explore": {
+    "title": "Explorar Motos",
+    "search_placeholder": "Buscar por modelo, local o patio",
+    "patio": "Patio:",
+    "location": "Ubicación:",
+    "patio_A": "Patio A",
+    "patio_B": "Patio B",
+    "patio_C": "Patio C",
+    "city_sp": "Sao Paulo",
+    "city_campinas": "Campinas",
+    "city_santos": "Santos"
+  },
+  "motos": {
+    "list_placeholder": "Lista de motos (temporal)",
+    "empty_list": "No se encontraron motos.",
+    "create_title": "Nueva Moto",
+    "edit_title": "Editar Moto",
+    "created_success": "Moto creada con éxito.",
+    "updated_success": "Moto actualizada con éxito.",
+    "delete_success": "Moto eliminada con éxito.",
+    "create_fail": "Error al crear la moto.",
+    "update_fail": "Error al actualizar la moto.",
+    "delete_fail": "Error al eliminar la moto."
+  }
+  ,
+  "placeholders": {
+    "modelo": "Modelo de la moto",
+    "placa": "ABC-1234",
+    "patio": "ID del patio",
+    "km": "Kilometraje"
+  },
+  "loading_label": "Cargando..."
+  ,
+  "error_label": "Error",
+  "success_label": "Éxito",
+  "fetch_fail": "Error al obtener los datos. Intenta nuevamente.",
+  "label_plate": "Patente",
+  "label_patio": "Patio",
+  "label_km": "Kilometraje",
+  "location": "Ubicación",
+  "not_found_message": "Verifica la patente o clave ingresada.",
+  "delete_success": "Moto eliminada con éxito.",
+  "delete_fail": "Error al eliminar la moto."
+}
