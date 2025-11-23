@@ -11,6 +11,8 @@ import {
 import { useProtectedScreen } from '../../src/hooks/useProtectedScreen';
 import { usuariosService, UsuarioDTO } from '../../src/services/usuariosService';
 import { competenciasService } from '../../src/services/competenciasService';
+import { useAuth } from '../../src/contexts';
+import AppButton from '../../src/components/AppButton';
 
 const DEFAULT_USER_ID = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_DEFAULT_USER_ID)
   ? parseInt(process.env.EXPO_PUBLIC_DEFAULT_USER_ID, 10)
@@ -18,6 +20,7 @@ const DEFAULT_USER_ID = (typeof process !== 'undefined' && process.env?.EXPO_PUB
 
 export default function PerfilScreen() {
   useProtectedScreen();
+  const { usuario: authUsuario, token, logout } = useAuth();
   const [loading, setLoading] = useState(true);
   const [usuario, setUsuario] = useState<UsuarioDTO | null>(null);
   const [todasCompetencias, setTodasCompetencias] = useState<any[]>([]);
@@ -25,10 +28,29 @@ export default function PerfilScreen() {
   async function carregar() {
     setLoading(true);
     try {
-      const [u, comps] = await Promise.all([
-        usuariosService.getById(DEFAULT_USER_ID),
-        competenciasService.listAll(),
-      ]);
+      // Se tivermos um usuário do contexto e o token for dev, usamos os dados do contexto
+      let u: UsuarioDTO | null = null;
+      if (token && token.startsWith && token.startsWith('dev-token-') && authUsuario) {
+        u = {
+          id: Number(authUsuario.id) || DEFAULT_USER_ID,
+          nome: authUsuario.nome,
+          email: authUsuario.email,
+          cidade: '',
+          uf: '',
+          competencias: [],
+        } as UsuarioDTO;
+      } else {
+        // Tentar buscar usuário real pelo id do contexto; se não der, usar DEFAULT_USER_ID
+        const idToFetch = authUsuario && Number(authUsuario.id) ? Number(authUsuario.id) : DEFAULT_USER_ID;
+        try {
+          u = await usuariosService.getById(idToFetch);
+        } catch (err) {
+          console.warn('Falha ao buscar usuário por id, usando default:', err);
+          u = null;
+        }
+      }
+
+      const comps = await competenciasService.listAll();
       setUsuario(u);
       setTodasCompetencias(comps);
     } catch (err) {
@@ -71,11 +93,14 @@ export default function PerfilScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 8 }}>
+        <AppButton title="Sair" onPress={async () => { await logout(); }} />
+      </View>
       <View style={styles.header}>
-        <Text style={styles.name}>{usuario.nome}</Text>
-        <Text style={styles.email}>{usuario.email}</Text>
+        <Text style={styles.name}>{usuario?.nome ?? authUsuario?.nome ?? 'Usuário'}</Text>
+        <Text style={styles.email}>{usuario?.email ?? authUsuario?.email ?? ''}</Text>
         <Text style={styles.location}>
-          {usuario.cidade} / {usuario.uf}
+          {usuario?.cidade ?? ''} {usuario?.uf ? ` / ${usuario.uf}` : ''}
         </Text>
       </View>
 

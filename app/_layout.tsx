@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import 'react-native-reanimated';
 
 import { ThemeProviderCustom, useThemeCustom, AuthProvider } from '../src/contexts';
+import DevBanner from '../src/components/DevBanner';
 
 function RootStack() {
   const { navTheme } = useThemeCustom();
@@ -28,7 +29,8 @@ export default function RootLayout() {
     <ThemeProviderCustom>
       <SafeAreaProvider>
         <AuthProvider>
-          <RootStack />
+            <DevBanner />
+            <RootStack />
         </AuthProvider>
       </SafeAreaProvider>
     </ThemeProviderCustom>
