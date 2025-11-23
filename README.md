@@ -161,3 +161,9 @@ npx expo start
 
 O app foi preparado para atender à rubrica de **Mobile Application Development**, consumindo de forma
 real a API Java do projeto TrilhaJusta, com autenticação, navegação e CRUD integrado.
+
+
+## Video demostrativo:
+https://youtube.com/shorts/E8G4fGgsa14?si=dul-gJ6KOyrr8MJr
+
+
