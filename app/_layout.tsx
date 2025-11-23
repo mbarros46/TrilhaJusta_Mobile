@@ -8,7 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ActivityIndicator, View } from 'react-native';
 import * as Font from 'expo-font';
 
-import { ThemeProviderCustom, useThemeCustom, AuthProvider } from '../src/contexts';
+import { ThemeProviderCustom, useThemeCustom, AuthProvider, LanguageProvider } from '../src/contexts';
 import DevBanner from '../src/components/DevBanner';
 
 // Registrar fontes do app (SpaceMono já presente no assets)
@@ -46,6 +46,8 @@ function RootStack() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="candidaturas/index" options={{ title: 'Minhas Candidaturas' }} />
         <Stack.Screen name="candidaturas/[id]" options={{ title: 'Detalhe da Candidatura' }} />
+        <Stack.Screen name="trilhas/[id]" options={{ title: 'Detalhe da Trilha' }} />
+        <Stack.Screen name="ai/recomendacoes" options={{ title: 'Recomendações por IA' }} />
       </Stack>
     </ThemeProvider>
   );
@@ -56,20 +58,22 @@ export default function RootLayout() {
 
   return (
     <ThemeProviderCustom>
-      <SafeAreaProvider>
-        <AuthProvider>
-          {!fontsLoaded ? (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <ActivityIndicator size="large" />
-            </View>
-          ) : (
-            <>
-              <DevBanner />
-              <RootStack />
-            </>
-          )}
-        </AuthProvider>
-      </SafeAreaProvider>
+      <LanguageProvider>
+        <SafeAreaProvider>
+          <AuthProvider>
+            {!fontsLoaded ? (
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" />
+              </View>
+            ) : (
+              <>
+                <DevBanner />
+                <RootStack />
+              </>
+            )}
+          </AuthProvider>
+        </SafeAreaProvider>
+      </LanguageProvider>
     </ThemeProviderCustom>
   );
 }

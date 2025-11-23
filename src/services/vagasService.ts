@@ -20,10 +20,19 @@ export interface Page<T> {
 }
 
 export const vagasService = {
-  async list(page = 0, size = 20): Promise<Page<VagaDTO>> {
-    const res = await client.get<Page<VagaDTO>>('/vagas', {
-      params: { page, size },
-    });
+  async list(
+    page = 0,
+    size = 20,
+    filters?: { competencias?: number[] | string; cidade?: string }
+  ): Promise<Page<VagaDTO>> {
+    const params: any = { page, size };
+    if (filters?.cidade) params.cidade = filters.cidade;
+    if (filters?.competencias) {
+      params.competencias = Array.isArray(filters.competencias)
+        ? filters.competencias.join(',')
+        : filters.competencias;
+    }
+    const res = await client.get<Page<VagaDTO>>('/vagas', { params });
     return res.data;
   },
 

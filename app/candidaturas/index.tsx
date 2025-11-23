@@ -4,17 +4,20 @@ import { useProtectedScreen } from '../../src/hooks/useProtectedScreen';
 import { useThemeColor } from '../../hooks/useThemeColor';
 import { candidaturasService, CandidaturaDTO, CandidaturaStatus } from '../../src/services/candidaturasService';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../../src/contexts';
 
 export default function CandidaturasListScreen() {
   useProtectedScreen();
   const [loading, setLoading] = useState(true);
   const [candidaturas, setCandidaturas] = useState<CandidaturaDTO[]>([]);
   const router = useRouter();
+  const { usuario } = useAuth();
 
   async function carregar() {
     setLoading(true);
     try {
-      const page = await candidaturasService.list(0, 50);
+      const uid = usuario && Number(usuario.id) ? Number(usuario.id) : undefined;
+      const page = await candidaturasService.list(0, 50, uid);
       setCandidaturas(page.content);
     } catch (err) {
       console.error('Erro ao carregar candidaturas', err);

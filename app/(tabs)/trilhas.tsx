@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useProtectedScreen } from '../../src/hooks/useProtectedScreen';
 import { trilhasService, TrilhaDTO, CursoDTO } from '../../src/services/trilhasService';
 
 export default function TrilhasScreen() {
   useProtectedScreen();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [trilhas, setTrilhas] = useState<TrilhaDTO[]>([]);
   const [cursosPorTrilha, setCursosPorTrilha] = useState<Record<number, CursoDTO[]>>({});
@@ -46,6 +48,15 @@ export default function TrilhasScreen() {
     );
   }
 
+  if (trilhas.length === 0) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.empty}>Nenhuma trilha disponível no momento.</Text>
+        <Text style={styles.emptySubtitle}>Verifique se o backend está rodando.</Text>
+      </View>
+    );
+  }
+
   return (
     <FlatList
       contentContainerStyle={styles.listContainer}
@@ -54,30 +65,29 @@ export default function TrilhasScreen() {
       renderItem={({ item }) => {
         const cursos = cursosPorTrilha[item.id] || [];
         return (
-          <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => router.push(`/trilhas/${item.id}`)}
+            activeOpacity={0.7}
+          >
             <Text style={styles.title}>{item.titulo}</Text>
             {!!item.descricao && <Text style={styles.description}>{item.descricao}</Text>}
 
-            <Text style={styles.sectionTitle}>Cursos</Text>
-            {cursos.length === 0 ? (
-              <Text style={styles.empty}>Nenhum curso cadastrado para esta trilha.</Text>
-            ) : (
-              cursos.map((c) => (
-                <View key={c.id} style={styles.courseRow}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.courseTitle}>{c.titulo}</Text>
-                    <Text style={styles.courseMeta}>
-                      {c.cargaHoraria ? `${c.cargaHoraria}h` : 'Carga horária não informada'} •{' '}
-                      {c.provedor || 'Provedor não informado'}
-                    </Text>
-                  </View>
-                  <TouchableOpacity style={styles.chip}>
-                    <Text style={styles.chipText}>Concluir</Text>
-                  </TouchableOpacity>
-                </View>
-              ))
+            <Text style={styles.sectionTitle}>{cursos.length} curso(s)</Text>
+            {cursos.length > 0 && (
+              <View style={styles.cursosPreview}>
+                {cursos.slice(0, 3).map((c) => (
+                  <Text key={c.id} style={styles.cursoPreviewText}>
+                    • {c.titulo}
+                  </Text>
+                ))}
+                {cursos.length > 3 && (
+                  <Text style={styles.cursoPreviewText}>+ {cursos.length - 3} outros</Text>
+                )}
+              </View>
             )}
-          </View>
+            <Text style={styles.verMais}>Toque para ver detalhes →</Text>
+          </TouchableOpacity>
         );
       }}
     />
@@ -122,34 +132,28 @@ const styles = StyleSheet.create({
     color: '#e5e7eb',
   },
   empty: {
-    marginTop: 4,
-    fontSize: 13,
-    color: '#9ca3af',
-  },
-  courseRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 6,
-    gap: 8,
-  },
-  courseTitle: {
     fontSize: 14,
-    color: '#e5e7eb',
+    color: '#f9fafb',
+    textAlign: 'center',
   },
-  courseMeta: {
+  emptySubtitle: {
     fontSize: 12,
     color: '#9ca3af',
+    marginTop: 8,
+    textAlign: 'center',
   },
-  chip: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: '#22c55e',
+  cursosPreview: {
+    marginTop: 8,
   },
-  chipText: {
-    fontSize: 12,
-    color: '#22c55e',
+  cursoPreviewText: {
+    fontSize: 13,
+    color: '#cbd5e1',
+    marginBottom: 4,
+  },
+  verMais: {
+    fontSize: 13,
+    color: '#60a5fa',
+    marginTop: 12,
     fontWeight: '600',
   },
 });

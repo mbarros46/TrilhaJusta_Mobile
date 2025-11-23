@@ -42,38 +42,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function loadStoragedData() {
     try {
-  const storagedToken = await AsyncStorage.getItem('@TrilhaJusta:token');
-  const storagedUser = await AsyncStorage.getItem('@TrilhaJusta:user');
-
-      // Migração automática: se existirem chaves antigas de um projeto anterior (FleetZone),
-      // migrar para o namespace @TrilhaJusta para evitar perda de sessão ao renomear keys.
-      if ((!storagedToken || !storagedUser)) {
-        try {
-          const oldToken = await AsyncStorage.getItem('@FleetZone:token');
-          const oldUser = await AsyncStorage.getItem('@FleetZone:user');
-          if (oldToken) {
-            await AsyncStorage.setItem('@TrilhaJusta:token', oldToken);
-            await AsyncStorage.removeItem('@FleetZone:token');
-            if (oldUser) {
-              await AsyncStorage.setItem('@TrilhaJusta:user', oldUser);
-              await AsyncStorage.removeItem('@FleetZone:user');
-            }
-            // Recarregar os valores migrados
-            const newToken = await AsyncStorage.getItem('@TrilhaJusta:token');
-            const newUser = await AsyncStorage.getItem('@TrilhaJusta:user');
-            if (newToken) {
-              setToken(newToken);
-              setAuthToken(newToken);
-              if (newUser) setUsuario(JSON.parse(newUser));
-              setLoading(false);
-              return;
-            }
-          }
-        } catch (e) {
-          // se migração falhar, apenas prosseguir com lógica normal
-          console.warn('Migração de chaves antigas falhou', e);
-        }
-      }
+      const storagedToken = await AsyncStorage.getItem('@TrilhaJusta:token');
+      const storagedUser = await AsyncStorage.getItem('@TrilhaJusta:user');
 
       if (storagedToken && storagedUser) {
         setToken(storagedToken);

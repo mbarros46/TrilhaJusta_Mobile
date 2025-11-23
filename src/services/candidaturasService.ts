@@ -23,10 +23,10 @@ const DEFAULT_USER_ID = (typeof process !== 'undefined' && process.env?.EXPO_PUB
   : 1;
 
 export const candidaturasService = {
-  async list(page = 0, size = 20): Promise<Page<CandidaturaDTO>> {
-    const res = await client.get<Page<CandidaturaDTO>>('/candidaturas', {
-      params: { page, size },
-    });
+  async list(page = 0, size = 20, usuarioId?: number): Promise<Page<CandidaturaDTO>> {
+    const params: any = { page, size };
+    if (typeof usuarioId === 'number') params.usuarioId = usuarioId;
+    const res = await client.get<Page<CandidaturaDTO>>('/candidaturas', { params });
     return res.data;
   },
 
@@ -39,7 +39,7 @@ export const candidaturasService = {
   },
 
   async updateStatus(id: number, status: CandidaturaStatus): Promise<CandidaturaDTO> {
-    const res = await client.patch<CandidaturaDTO>(`/candidaturas/${id}/status`, { status });
+    const res = await client.patch<CandidaturaDTO>(`/candidaturas/${id}`, { status });
     return res.data;
   },
 

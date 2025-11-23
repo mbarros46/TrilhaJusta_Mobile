@@ -18,24 +18,8 @@ export const apiConfig = {
   },
 };
 
-// Tipos para as entidades da API
-export interface Moto {
-  id: string;
-  modelo: string;
-  placa: string;
-  status: 'Disponível' | 'Em manutenção' | 'Indisponível';
-  dataEntrada: string;
-  patio: string;
-  km: number;
-  manutencao: string;
-}
-
-export interface Usuario {
-  id: string;
-  email: string;
-  nome: string;
-}
-
+// Tipos específicos de entidades devem viver em seus próprios serviços.
+// Este arquivo mantém apenas configuração base e helpers de autenticação.
 // Headers com autenticação
 export const getAuthHeaders = (token?: string) => ({
   ...apiConfig.headers,

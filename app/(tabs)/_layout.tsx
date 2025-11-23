@@ -28,6 +28,10 @@ const SobreIcon = ({ color }: { color: string }) => (
   <IconSymbol size={28} name="info.circle" color={color} />
 );
 
+const FAQIcon = ({ color }: { color: string }) => (
+  <IconSymbol size={28} name="questionmark.circle" color={color} />
+);
+
 export default function TabsLayout() {
   const colorScheme = useColorScheme() ?? 'light';
   const tintColor = Colors[colorScheme].tint;
@@ -83,6 +87,18 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }: { color: string }) => <SobreIcon color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="faq"
+        options={{
+          title: 'FAQ',
+          tabBarIcon: ({ color }: { color: string }) => <FAQIcon color={color} />,
+        }}
+      />
+      {/* Telas legadas escondidas do tab bar */}
+      <Tabs.Screen name="configuracoes" options={{ href: null }} />
+      <Tabs.Screen name="detalhes" options={{ href: null }} />
+      <Tabs.Screen name="explore" options={{ href: null }} />
+      <Tabs.Screen name="formulario" options={{ href: null }} />
     </Tabs>
   );
 }

@@ -42,6 +42,14 @@ export default function DashboardScreen() {
           <AppButton title="Minhas candidaturas" onPress={() => router.push('/candidaturas/index')} />
         </View>
       </View>
+
+      <View style={styles.row}>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Recomendações por IA</Text>
+          <Text style={styles.cardText}>Receba sugestões personalizadas de trilhas e cursos.</Text>
+          <AppButton title="Receber recomendações" onPress={() => router.push('/ai/recomendacoes')} />
+        </View>
+      </View>
     </ScrollView>
   );
 }

@@ -30,15 +30,18 @@ export const usuariosService = {
         const res = await client.get<UsuarioDTO>(path);
         if (res && res.data) return res.data;
       } catch (e: any) {
-        // se 404/401/403, tentar próximo candidato
         if (e.response && (e.response.status === 404 || e.response.status === 401 || e.response.status === 403)) {
           continue;
         }
-        // outros erros de rede: continue tentando outras rotas
         continue;
       }
     }
     return null;
+  },
+
+  async update(id: number, payload: Partial<Pick<UsuarioDTO, 'nome' | 'cidade' | 'uf'>>): Promise<UsuarioDTO> {
+    const res = await client.put<UsuarioDTO>(`/usuarios/${id}`, payload);
+    return res.data;
   },
 
   async addCompetencia(usuarioId: number, competenciaId: number): Promise<UsuarioDTO> {
