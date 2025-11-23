@@ -52,35 +52,35 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Dashboard',
-          tabBarIcon: ({ color }) => <DashboardIcon color={color} />,
+    tabBarIcon: ({ color }: { color: string }) => <DashboardIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name="trilhas"
         options={{
           title: 'Trilhas',
-          tabBarIcon: ({ color }) => <TrilhasIcon color={color} />,
+          tabBarIcon: ({ color }: { color: string }) => <TrilhasIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name="vagas"
         options={{
           title: 'Vagas',
-          tabBarIcon: ({ color }) => <VagasIcon color={color} />,
+          tabBarIcon: ({ color }: { color: string }) => <VagasIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name="perfil"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color }) => <PerfilIcon color={color} />,
+          tabBarIcon: ({ color }: { color: string }) => <PerfilIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name="sobre"
         options={{
           title: 'Sobre',
-          tabBarIcon: ({ color }) => <SobreIcon color={color} />,
+          tabBarIcon: ({ color }: { color: string }) => <SobreIcon color={color} />,
         }}
       />
     </Tabs>

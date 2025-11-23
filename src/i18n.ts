@@ -399,7 +399,7 @@ const translations: Record<SupportedLang, Record<string, string>> = {
   },
 };
 
-const LANG_KEY = '@FleetZone:lang';
+const LANG_KEY = '@TrilhaJusta:lang';
 
 export async function setAppLang(lang: SupportedLang) {
   await AsyncStorage.setItem(LANG_KEY, lang);

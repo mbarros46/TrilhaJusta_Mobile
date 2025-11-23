@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
 import { useAccentColor } from '../../src/styles/theme';
+import { useThemeColor } from '../../hooks/useThemeColor';
 
 interface Props {
   size?: number | 'small' | 'large';
@@ -10,7 +11,8 @@ interface Props {
 
 export default function Loading({ size = 'small', color, label }: Props) {
   const { accentColor } = useAccentColor();
-  const indicatorColor = (color ?? accentColor) || '#0A7EA4';
+  const accent = useThemeColor({}, 'accent');
+  const indicatorColor = (color ?? accentColor) || accent || '#0B7A6B';
 
   return (
     <View style={styles.container} accessibilityRole={"progressbar"} accessibilityLiveRegion={"polite"}>

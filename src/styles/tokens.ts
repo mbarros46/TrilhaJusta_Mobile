@@ -1,5 +1,5 @@
 export const colors = {
-  primary: '#0a7ea4',
+  primary: '#0B7A6B',
   secondary: '#f0f0f0',
   error: '#ff4444',
   success: '#4CAF50',
@@ -17,7 +17,7 @@ export const colors = {
   border: {
     default: 'transparent',
     error: '#ff4444',
-    focus: '#0a7ea4',
+    focus: '#0B7A6B',
   },
 };
 

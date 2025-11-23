@@ -6,7 +6,8 @@ import { candidaturasService, CandidaturaDTO } from '../../src/services/candidat
 
 export default function CandidaturaDetailScreen() {
   useProtectedScreen();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams();
+  const id = params?.id as string | undefined;
   const [loading, setLoading] = useState(true);
   const [candidatura, setCandidatura] = useState<CandidaturaDTO | null>(null);
 
@@ -15,9 +16,8 @@ export default function CandidaturaDetailScreen() {
     (async () => {
       if (!id) return;
       try {
-        const page = await candidaturasService.list(0, 200);
-        const found = page.content.find((c) => String(c.id) === String(id)) || null;
-        if (mounted) setCandidatura(found);
+        const found = await candidaturasService.getById(Number(id));
+        if (mounted) setCandidatura(found as CandidaturaDTO);
       } catch (err) {
         console.error('Erro ao carregar candidatura', err);
       } finally {

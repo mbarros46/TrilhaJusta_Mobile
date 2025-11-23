@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { t, getAppLang } from '../i18n';
 
-const PUSH_TOKEN_KEY = '@FleetZone:pushToken';
+const PUSH_TOKEN_KEY = '@TrilhaJusta:pushToken';
 
 export async function registerForPushNotificationsAsync() {
   try {

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { login as loginService, register as registerService } from '../services/authService';
+import { usuariosService } from '../services/usuariosService';
 import { setAuthToken } from '../services/axiosApi';
 
 interface Usuario {
@@ -41,14 +42,58 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function loadStoragedData() {
     try {
-      const storagedToken = await AsyncStorage.getItem('@FleetZone:token');
-      const storagedUser = await AsyncStorage.getItem('@FleetZone:user');
+  const storagedToken = await AsyncStorage.getItem('@TrilhaJusta:token');
+  const storagedUser = await AsyncStorage.getItem('@TrilhaJusta:user');
+
+      // Migração automática: se existirem chaves antigas de um projeto anterior (FleetZone),
+      // migrar para o namespace @TrilhaJusta para evitar perda de sessão ao renomear keys.
+      if ((!storagedToken || !storagedUser)) {
+        try {
+          const oldToken = await AsyncStorage.getItem('@FleetZone:token');
+          const oldUser = await AsyncStorage.getItem('@FleetZone:user');
+          if (oldToken) {
+            await AsyncStorage.setItem('@TrilhaJusta:token', oldToken);
+            await AsyncStorage.removeItem('@FleetZone:token');
+            if (oldUser) {
+              await AsyncStorage.setItem('@TrilhaJusta:user', oldUser);
+              await AsyncStorage.removeItem('@FleetZone:user');
+            }
+            // Recarregar os valores migrados
+            const newToken = await AsyncStorage.getItem('@TrilhaJusta:token');
+            const newUser = await AsyncStorage.getItem('@TrilhaJusta:user');
+            if (newToken) {
+              setToken(newToken);
+              setAuthToken(newToken);
+              if (newUser) setUsuario(JSON.parse(newUser));
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (e) {
+          // se migração falhar, apenas prosseguir com lógica normal
+          console.warn('Migração de chaves antigas falhou', e);
+        }
+      }
 
       if (storagedToken && storagedUser) {
         setToken(storagedToken);
         // configure axios client with stored token
         setAuthToken(storagedToken);
         setUsuario(JSON.parse(storagedUser));
+      } else if (storagedToken && !storagedUser) {
+        // temos token, mas sem usuário no storage: tentar buscar perfil /me
+        setToken(storagedToken);
+        setAuthToken(storagedToken);
+        try {
+          const me = await usuariosService.getMe();
+          if (me) {
+            const usuarioObj = { id: String(me.id), nome: me.nome, email: me.email };
+            setUsuario(usuarioObj);
+          await AsyncStorage.setItem('@TrilhaJusta:user', JSON.stringify(usuarioObj));
+          }
+        } catch (e) {
+          console.warn('Não foi possível buscar perfil a partir do token armazenado', e);
+        }
       }
     } catch (error) {
       console.error('Erro ao carregar dados do storage:', error);
@@ -64,13 +109,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       const { token: authToken, usuario: authUsuario } = response;
 
-      await AsyncStorage.setItem('@FleetZone:token', authToken);
-      await AsyncStorage.setItem('@FleetZone:user', JSON.stringify(authUsuario));
+  await AsyncStorage.setItem('@TrilhaJusta:token', authToken);
+  await AsyncStorage.setItem('@TrilhaJusta:user', JSON.stringify(authUsuario));
 
       setToken(authToken);
   // set token for axios client
   setAuthToken(authToken);
-      setUsuario(authUsuario);
+      // tentar buscar perfil real e sobrescrever usuario se disponível
+      try {
+        const me = await usuariosService.getMe();
+        if (me) {
+          const usuarioObj = { id: String(me.id), nome: me.nome, email: me.email };
+          setUsuario(usuarioObj);
+          await AsyncStorage.setItem('@TrilhaJusta:user', JSON.stringify(usuarioObj));
+        } else {
+          setUsuario(authUsuario);
+        }
+      } catch (e) {
+        setUsuario(authUsuario);
+      }
     } catch (error) {
       throw error;
     } finally {
@@ -83,8 +140,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(true);
       const mockToken = `dev-token-${Math.random().toString(36).slice(2, 10)}`;
       const usuario = { id: String(Math.floor(Math.random() * 1000000)), nome: email.split('@')[0] || 'Dev', email };
-      await AsyncStorage.setItem('@FleetZone:token', mockToken);
-      await AsyncStorage.setItem('@FleetZone:user', JSON.stringify(usuario));
+  await AsyncStorage.setItem('@TrilhaJusta:token', mockToken);
+  await AsyncStorage.setItem('@TrilhaJusta:user', JSON.stringify(usuario));
       setAuthToken(mockToken);
       setToken(mockToken);
       setUsuario(usuario);
@@ -103,13 +160,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       const { token: authToken, usuario: authUsuario } = response;
 
-      await AsyncStorage.setItem('@FleetZone:token', authToken);
-      await AsyncStorage.setItem('@FleetZone:user', JSON.stringify(authUsuario));
+  await AsyncStorage.setItem('@TrilhaJusta:token', authToken);
+  await AsyncStorage.setItem('@TrilhaJusta:user', JSON.stringify(authUsuario));
 
       setToken(authToken);
   // set token for axios client
   setAuthToken(authToken);
-      setUsuario(authUsuario);
+      // tentar buscar perfil real e sobrescrever usuario se disponível
+      try {
+        const me = await usuariosService.getMe();
+        if (me) {
+          const usuarioObj = { id: String(me.id), nome: me.nome, email: me.email };
+          setUsuario(usuarioObj);
+          await AsyncStorage.setItem('@TrilhaJusta:user', JSON.stringify(usuarioObj));
+        } else {
+          setUsuario(authUsuario);
+        }
+      } catch (e) {
+        setUsuario(authUsuario);
+      }
     } catch (error) {
       throw error;
     } finally {
@@ -122,8 +191,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(true);
       const mockToken = `dev-token-${Math.random().toString(36).slice(2, 10)}`;
       const usuario = { id: String(Math.floor(Math.random() * 1000000)), nome: nome || email.split('@')[0] || 'Dev', email };
-      await AsyncStorage.setItem('@FleetZone:token', mockToken);
-      await AsyncStorage.setItem('@FleetZone:user', JSON.stringify(usuario));
+  await AsyncStorage.setItem('@TrilhaJusta:token', mockToken);
+  await AsyncStorage.setItem('@TrilhaJusta:user', JSON.stringify(usuario));
       setAuthToken(mockToken);
       setToken(mockToken);
       setUsuario(usuario);
@@ -137,8 +206,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function logout() {
     try {
-      await AsyncStorage.removeItem('@FleetZone:token');
-      await AsyncStorage.removeItem('@FleetZone:user');
+  await AsyncStorage.removeItem('@TrilhaJusta:token');
+  await AsyncStorage.removeItem('@TrilhaJusta:user');
       
       setToken(null);
       // clear axios auth header

@@ -84,73 +84,9 @@ async function run() {
     }
   }
 
-  // 1) Create
-  const payload = { modelo: 'Teste CI', placa: 'TST-0001', status: 'Disponível' };
-  let created;
-  try {
-    const r = await axios.post(`${BASE}/motos`, payload, { timeout: 5000, headers: commonHeaders, maxRedirects: 0 });
-    console.log('Create status:', r.status);
-    created = r.data;
-    console.log('Created:', created);
-  } catch (err) {
-    const resp = err.response;
-    if (resp) {
-      console.error('Create failed, status:', resp.status, 'headers:', resp.headers);
-    } else {
-      console.error('Create failed:', err.message || err);
-    }
-    return process.exitCode = 1;
-  }
-
-  const id = created?.id ?? created?.ID ?? created?.codigo ?? null;
-  if (!id) {
-    console.warn('Could not determine created id from response, attempt to fetch by plate');
-    try {
-    const list = await axios.get(`${BASE}/motos`, { timeout: 5000, headers: commonHeaders });
-      const found = list.data.find((m) => (m.placa || '').toLowerCase() === payload.placa.toLowerCase());
-      if (found) {
-        console.log('Found created by plate, id=', found.id);
-        created = found;
-      } else {
-        console.error('Created moto not found in list');
-        return process.exitCode = 1;
-      }
-    } catch (err) {
-      console.error('List failed:', err.message || err);
-      return process.exitCode = 1;
-    }
-  }
-
-  const realId = created.id ?? created.ID ?? created.codigo;
-
-  // 2) Get
-  try {
-  const r = await axios.get(`${BASE}/motos/${realId}`, { timeout: 5000, headers: commonHeaders });
-    console.log('Get status:', r.status, 'data:', r.data);
-  } catch (err) {
-    console.error('Get failed:', err.message || err);
-    return process.exitCode = 1;
-  }
-
-  // 3) Update
-  try {
-  const r = await axios.put(`${BASE}/motos/${realId}`, { modelo: 'Teste CI Atualizado', placa: payload.placa, status: 'Em manutenção' }, { timeout: 5000, headers: commonHeaders });
-    console.log('Update status:', r.status, 'data:', r.data);
-  } catch (err) {
-    console.error('Update failed:', err.message || err);
-    return process.exitCode = 1;
-  }
-
-  // 4) Delete
-  try {
-  const r = await axios.delete(`${BASE}/motos/${realId}`, { timeout: 5000, headers: commonHeaders });
-    console.log('Delete status:', r.status);
-  } catch (err) {
-    console.error('Delete failed:', err.message || err);
-    return process.exitCode = 1;
-  }
-
-  console.log('CRUD test finished successfully');
+  // The 'motos' resource was removed from this project. Skip motos CRUD test.
+  console.log('motos endpoints removed — skipping motos CRUD test');
+  return;
 }
 
 run().catch((e) => {

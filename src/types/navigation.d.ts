@@ -1,7 +1,6 @@
 export type RootStackParamList = {
   '(tabs)': undefined;
   '(tabs)/index': undefined;
-  '(tabs)/motos': undefined;
   '(tabs)/detalhes': {
     modelo: string;
     placa: string;

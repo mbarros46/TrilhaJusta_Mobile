@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
@@ -13,6 +12,8 @@ import { usuariosService, UsuarioDTO } from '../../src/services/usuariosService'
 import { competenciasService } from '../../src/services/competenciasService';
 import { useAuth } from '../../src/contexts';
 import AppButton from '../../src/components/AppButton';
+import { ThemedText } from '../../src/components/ThemedText';
+import { useThemeColor } from '../../hooks/useThemeColor';
 
 const DEFAULT_USER_ID = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_DEFAULT_USER_ID)
   ? parseInt(process.env.EXPO_PUBLIC_DEFAULT_USER_ID, 10)
@@ -21,6 +22,8 @@ const DEFAULT_USER_ID = (typeof process !== 'undefined' && process.env?.EXPO_PUB
 export default function PerfilScreen() {
   useProtectedScreen();
   const { usuario: authUsuario, token, logout } = useAuth();
+  const bg = useThemeColor({}, 'background');
+  const accent = useThemeColor({}, 'accent');
   const [loading, setLoading] = useState(true);
   const [usuario, setUsuario] = useState<UsuarioDTO | null>(null);
   const [todasCompetencias, setTodasCompetencias] = useState<any[]>([]);
@@ -82,9 +85,9 @@ export default function PerfilScreen() {
 
   if (loading || !usuario) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#60a5fa" />
-        <Text style={styles.loading}>Carregando perfil...</Text>
+      <View style={[styles.center, { backgroundColor: bg }]}>
+        <ActivityIndicator size="large" color={accent} />
+        <ThemedText style={styles.loading}>Carregando perfil...</ThemedText>
       </View>
     );
   }
@@ -92,32 +95,32 @@ export default function PerfilScreen() {
   const competenciasUsuario = usuario.competencias ?? [];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: bg }] }>
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 8 }}>
         <AppButton title="Sair" onPress={async () => { await logout(); }} />
       </View>
       <View style={styles.header}>
-        <Text style={styles.name}>{usuario?.nome ?? authUsuario?.nome ?? 'Usuário'}</Text>
-        <Text style={styles.email}>{usuario?.email ?? authUsuario?.email ?? ''}</Text>
-        <Text style={styles.location}>
+        <ThemedText type="heading" style={styles.name}>{usuario?.nome ?? authUsuario?.nome ?? 'Usuário'}</ThemedText>
+        <ThemedText style={styles.email}>{usuario?.email ?? authUsuario?.email ?? ''}</ThemedText>
+        <ThemedText style={styles.location}>
           {usuario?.cidade ?? ''} {usuario?.uf ? ` / ${usuario.uf}` : ''}
-        </Text>
+        </ThemedText>
       </View>
 
-      <Text style={styles.sectionTitle}>Minhas competências</Text>
+      <ThemedText type="subtitle" style={styles.sectionTitle}>Minhas competências</ThemedText>
       {competenciasUsuario.length === 0 ? (
-        <Text style={styles.empty}>Você ainda não possui competências associadas.</Text>
+        <ThemedText style={styles.empty}>Você ainda não possui competências associadas.</ThemedText>
       ) : (
         <View style={styles.chipsRow}>
           {competenciasUsuario.map((c) => (
-            <View key={c.id} style={styles.chipActive}>
-              <Text style={styles.chipText}>{c.nome}</Text>
+            <View key={c.id} style={[styles.chipActive, { backgroundColor: accent }]}>
+              <ThemedText style={styles.chipText}>{c.nome}</ThemedText>
             </View>
           ))}
         </View>
       )}
 
-      <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Adicionar/Remover competências</Text>
+  <ThemedText type="subtitle" style={[styles.sectionTitle, { marginTop: 16 }]}>Adicionar/Remover competências</ThemedText>
       <FlatList
         data={todasCompetencias}
         keyExtractor={(item) => String(item.id)}
@@ -125,12 +128,12 @@ export default function PerfilScreen() {
           const selected = competenciasUsuario.some((c) => c.id === item.id);
           return (
             <TouchableOpacity
-              style={[styles.compRow, selected && styles.compRowSelected]}
+              style={[styles.compRow, selected && { borderColor: accent }]}
               onPress={() => handleToggleCompetencia(item.id)}
             >
-              <Text style={styles.compName}>{item.nome}</Text>
-              <Text style={styles.compArea}>{item.area || 'Área geral'}</Text>
-              <Text style={styles.compAction}>{selected ? 'Remover' : 'Adicionar'}</Text>
+              <ThemedText style={styles.compName}>{item.nome}</ThemedText>
+              <ThemedText style={styles.compArea}>{item.area || 'Área geral'}</ThemedText>
+              <ThemedText style={[styles.compAction, { color: accent }]}>{selected ? 'Remover' : 'Adicionar'}</ThemedText>
             </TouchableOpacity>
           );
         }}
@@ -144,16 +147,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#020617',
   },
   loading: {
     marginTop: 12,
-    color: '#e5e7eb',
   },
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#020617',
   },
   header: {
     marginBottom: 16,
@@ -161,25 +161,20 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#f9fafb',
   },
   email: {
     fontSize: 14,
-    color: '#e5e7eb',
   },
   location: {
     fontSize: 13,
-    color: '#9ca3af',
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#e5e7eb',
     marginBottom: 8,
   },
   empty: {
     fontSize: 13,
-    color: '#9ca3af',
   },
   chipsRow: {
     flexDirection: 'row',
@@ -194,7 +189,6 @@ const styles = StyleSheet.create({
   },
   chipText: {
     fontSize: 12,
-    color: '#eef2ff',
     fontWeight: '600',
   },
   compRow: {
@@ -211,15 +205,12 @@ const styles = StyleSheet.create({
   },
   compName: {
     fontSize: 14,
-    color: '#f9fafb',
   },
   compArea: {
     fontSize: 12,
-    color: '#9ca3af',
   },
   compAction: {
     fontSize: 12,
-    color: '#60a5fa',
     marginTop: 4,
   },
 });

@@ -43,6 +43,11 @@ export const candidaturasService = {
     return res.data;
   },
 
+  async getById(id: number): Promise<CandidaturaDTO> {
+    const res = await client.get<CandidaturaDTO>(`/candidaturas/${id}`);
+    return res.data;
+  },
+
   async remove(id: number): Promise<void> {
     await client.delete(`/candidaturas/${id}`);
   },

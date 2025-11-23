@@ -1,12 +1,27 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView } from 'react-native';
 import { useProtectedScreen } from '../../src/hooks/useProtectedScreen';
+import { useThemeColor } from '../../hooks/useThemeColor';
+
+// tentar ler hash do commit gerado em build/script
+let commitHash = 'NÃO INFORMADO';
+try {
+  // import dinâmico para evitar erros em bundlers que não aceitam import estático de JSON
+  // caminho relativo da tela para assets/commit.json
+  // @ts-ignore
+  const commit = require('../../assets/commit.json');
+  if (commit && commit.hash) commitHash = commit.hash;
+} catch (e) {
+  // não crítico
+}
 
 export default function SobreScreen() {
   useProtectedScreen();
+  const accent = useThemeColor({}, 'accent');
+  const background = useThemeColor({}, 'background');
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+  <ScrollView contentContainerStyle={[styles.container, { backgroundColor: background }] }>
       <Text style={styles.title}>Sobre o app</Text>
       <Text style={styles.text}>
         TrilhaJusta é um protótipo acadêmico de uma plataforma de requalificação justa e recrutamento
@@ -31,8 +46,9 @@ export default function SobreScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Commit / Build</Text>
         <Text style={styles.text}>
-          Informe aqui o hash do commit publicado no Firebase App Distribution, conforme rubrica.
+          Hash do commit (se definido em env):
         </Text>
+  <Text style={[styles.text, { marginTop: 6, color: accent }]}>{commitHash}</Text>
       </View>
     </ScrollView>
   );

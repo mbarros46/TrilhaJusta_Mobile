@@ -12,7 +12,6 @@ const DEFAULT_USER_ID = (typeof process !== 'undefined' && process.env?.EXPO_PUB
   : '1';
 
 const DEV_AUTH = (typeof process !== 'undefined' && process.env?.EXPO_ENABLE_DEV_AUTH === 'true');
-const AUTO_DEV_FALLBACK = (typeof __DEV__ !== 'undefined' && __DEV__ === true);
 
 function isNetworkTimeoutError(err: any) {
   if (!err) return false;
@@ -61,8 +60,8 @@ export async function register(nome: string, email: string, senha: string, cidad
     const loginData = await loginInternal(email, senha);
     return loginData;
   } catch (err: any) {
-    // Fallback em dev: explicitamente via EXPO_ENABLE_DEV_AUTH ou automaticamente em modo dev se houver timeout/rede
-    if (DEV_AUTH || (AUTO_DEV_FALLBACK && isNetworkTimeoutError(err))) {
+    // Fallback em dev: somente se EXPO_ENABLE_DEV_AUTH=true. Não usar fallback automático em ambiente de avaliação.
+    if (DEV_AUTH) {
       console.warn('[authService] signup failed, falling back to dev token:', err?.message || err);
       const mockToken = `dev-token-${Math.random().toString(36).slice(2, 10)}`;
       setAuthToken(mockToken);
@@ -110,7 +109,7 @@ async function loginInternal(email: string, senha: string): Promise<{ token: str
 
     return { token, usuario };
   } catch (err: any) {
-    if (DEV_AUTH || (AUTO_DEV_FALLBACK && isNetworkTimeoutError(err))) {
+    if (DEV_AUTH) {
       console.warn('[authService] login failed, falling back to dev token:', err?.message || err);
       const mockToken = `dev-token-${Math.random().toString(36).slice(2, 10)}`;
       setAuthToken(mockToken);

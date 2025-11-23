@@ -3,6 +3,7 @@ import { Pressable, TextStyle, StyleProp, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from './ThemedText';
 import Loading from './Loading';
+import { useThemeColor } from '../../hooks/useThemeColor';
 
 interface Props {
   title: string;
@@ -16,8 +17,12 @@ interface Props {
   color?: string;
 }
 
-export default function AppButton({ title, onPress, loading, icon, style, textStyle, disabled, variant = 'solid', color = '#0A7EA4' }: Props) {
+export default function AppButton({ title, onPress, loading, icon, style, textStyle, disabled, variant = 'solid', color }: Props) {
   const isOutline = variant === 'outline';
+
+  // se não foi passada cor, usar a cor de destaque do tema
+  const defaultColor = useThemeColor({}, 'accent');
+  const resolvedColor = color ?? defaultColor;
 
   const baseStyle: StyleProp<ViewStyle> = {
     paddingVertical: 14,
@@ -29,10 +34,10 @@ export default function AppButton({ title, onPress, loading, icon, style, textSt
   };
 
   const dynamicStyle = isOutline
-    ? { backgroundColor: 'transparent', borderWidth: 2, borderColor: color }
-    : { backgroundColor: color };
+    ? { backgroundColor: 'transparent', borderWidth: 2, borderColor: resolvedColor }
+    : { backgroundColor: resolvedColor };
 
-  const textColor = isOutline ? color : 'white';
+  const textColor = isOutline ? resolvedColor : 'white';
 
   return (
     <Pressable

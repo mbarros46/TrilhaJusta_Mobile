@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { useProtectedScreen } from '../../src/hooks/useProtectedScreen';
+import { useThemeColor } from '../../hooks/useThemeColor';
 import { candidaturasService, CandidaturaDTO, CandidaturaStatus } from '../../src/services/candidaturasService';
 import { useRouter } from 'expo-router';
 
@@ -57,7 +58,7 @@ export default function CandidaturasListScreen() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#60a5fa" />
+  <ActivityIndicator size="large" color={useThemeColor({}, 'accent')} />
         <Text style={styles.loading}>Carregando candidaturas...</Text>
       </View>
     );
