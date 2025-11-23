@@ -4,6 +4,7 @@ declare module 'process' {
     namespace NodeJS {
       interface ProcessEnv {
         EXPO_PUBLIC_API_URL?: string;
+        EXPO_PUBLIC_DEFAULT_USER_ID?: string;
         NODE_ENV: 'development' | 'production' | 'test';
       }
     }
@@ -14,6 +15,7 @@ declare module 'process' {
 declare const process: {
   env: {
     EXPO_PUBLIC_API_URL?: string;
+    EXPO_PUBLIC_DEFAULT_USER_ID?: string;
     NODE_ENV: 'development' | 'production' | 'test';
   };
 };

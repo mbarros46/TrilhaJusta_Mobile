@@ -1,6 +1,13 @@
 import client from './axiosApi';
 import type { VagaDTO } from './vagasService';
 
+// Declaração de tipos para variáveis de ambiente Expo
+declare const process: {
+  env: {
+    EXPO_PUBLIC_DEFAULT_USER_ID?: string;
+  };
+};
+
 export type CandidaturaStatus = 'SUBMETIDA' | 'EM_ANALISE' | 'APROVADA' | 'REPROVADA';
 
 export interface CandidaturaDTO {

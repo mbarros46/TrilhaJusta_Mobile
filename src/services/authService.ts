@@ -1,5 +1,12 @@
 import client, { setAuthToken } from './axiosApi';
 
+// Declaração de tipos para variáveis de ambiente Expo
+declare const process: {
+  env: {
+    EXPO_PUBLIC_DEFAULT_USER_ID?: string;
+    EXPO_ENABLE_DEV_AUTH?: string;
+  };
+};
 
 interface UsuarioCliente {
   id: string;
@@ -28,13 +35,35 @@ function isNetworkTimeoutError(err: any) {
  */
 export async function register(nome: string, email: string, senha: string, cidade: string, uf: string) {
   try {
-    // Tentar rota comum /auth/signup, se 404 tentar /auth/register (variações comuns)
+    // Payload ajustado para o backend TrilhaJusta
+    const payload = {
+      nome,
+      email,
+      passwordHash: senha, // Backend espera 'passwordHash' em vez de 'senha'
+      cidade,
+      uf,
+      role: 'USER', // Role padrão
+      competencias: [], // Lista vazia inicial
+    };
+
+    // Tentar diferentes endpoints de cadastro
     let signupResp;
     try {
-      signupResp = await client.post('/auth/signup', { nome, email, senha, cidade, uf });
+      // Primeiro tenta POST /usuarios (endpoint RESTful padrão)
+      signupResp = await client.post('/usuarios', payload);
     } catch (e: any) {
       if (e.response && e.response.status === 404) {
-        signupResp = await client.post('/auth/register', { nome, email, senha, cidade, uf });
+        // Se não existir, tenta /auth/signup
+        try {
+          signupResp = await client.post('/auth/signup', payload);
+        } catch (e2: any) {
+          if (e2.response && e2.response.status === 404) {
+            // Tenta /auth/register
+            signupResp = await client.post('/auth/register', payload);
+          } else {
+            throw e2;
+          }
+        }
       } else {
         throw e;
       }
@@ -90,7 +119,18 @@ export async function register(nome: string, email: string, senha: string, cidad
 
 async function loginInternal(email: string, senha: string): Promise<{ token: string; usuario: UsuarioCliente }> {
   try {
-    const resp = await client.post('/auth/login', { email, senha });
+    // Tentar primeiro com 'senha', se falhar tentar com 'passwordHash'
+    let resp;
+    try {
+      resp = await client.post('/auth/login', { email, senha });
+    } catch (e: any) {
+      // Se der erro 400 (bad request), pode ser que o backend espere 'passwordHash'
+      if (e.response && (e.response.status === 400 || e.response.status === 401)) {
+        resp = await client.post('/auth/login', { email, passwordHash: senha });
+      } else {
+        throw e;
+      }
+    }
     const data = resp?.data || {};
     const token = data.token || (data as any).accessToken;
     if (!token) {

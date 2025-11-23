@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
-  FlatList,
   TouchableOpacity,
   Alert,
   TextInput,
@@ -17,8 +16,8 @@ import AppButton from '../../src/components/AppButton';
 import { ThemedText } from '../../src/components/ThemedText';
 import { useThemeColor } from '../../hooks/useThemeColor';
 
-const DEFAULT_USER_ID = (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_DEFAULT_USER_ID)
-  ? parseInt(process.env.EXPO_PUBLIC_DEFAULT_USER_ID, 10)
+const DEFAULT_USER_ID = (typeof process !== 'undefined' && process.env?.['EXPO_PUBLIC_DEFAULT_USER_ID'])
+  ? parseInt(process.env['EXPO_PUBLIC_DEFAULT_USER_ID']!, 10)
   : 1;
 
 export default function PerfilScreen() {
@@ -200,14 +199,16 @@ export default function PerfilScreen() {
       ) : (
         <View style={styles.chipsRow}>
           {competenciasUsuario.map((c) => (
-            <View key={c.id} style={[styles.chipActive, { backgroundColor: accent }]}>
-              <ThemedText style={styles.chipText}>{c.nome}</ThemedText>
-            </View>
+            <React.Fragment key={c.id}>
+              <View style={[styles.chipActive, { backgroundColor: accent }]}>
+                <ThemedText style={styles.chipText}>{c.nome}</ThemedText>
+              </View>
+            </React.Fragment>
           ))}
         </View>
       )}
 
-  <ThemedText type="subtitle" style={[styles.sectionTitle, { marginTop: 16 }]}>Adicionar/Remover competências</ThemedText>
+      <ThemedText type="subtitle" style={[styles.sectionTitle, { marginTop: 16 }]}>Adicionar/Remover competências</ThemedText>
       {todasCompetencias.map((item) => {
         const selected = competenciasUsuario.some((c) => c.id === item.id);
         return (

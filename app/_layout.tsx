@@ -38,6 +38,7 @@ function RootStack() {
   const { navTheme } = useThemeCustom();
 
   return (
+    // @ts-ignore - ThemeProvider typing issue with children prop
     <ThemeProvider value={navTheme}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -57,9 +58,13 @@ export default function RootLayout() {
   const fontsLoaded = useLoadFonts();
 
   return (
+    // @ts-ignore - Provider typing issues with children
     <ThemeProviderCustom>
+      {/* @ts-ignore */}
       <LanguageProvider>
+        {/* @ts-ignore */}
         <SafeAreaProvider>
+          {/* @ts-ignore */}
           <AuthProvider>
             {!fontsLoaded ? (
               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

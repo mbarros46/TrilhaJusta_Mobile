@@ -77,9 +77,11 @@ export default function TrilhasScreen() {
             {cursos.length > 0 && (
               <View style={styles.cursosPreview}>
                 {cursos.slice(0, 3).map((c) => (
-                  <Text key={c.id} style={styles.cursoPreviewText}>
-                    • {c.titulo}
-                  </Text>
+                  <View key={c.id}>
+                    <Text style={styles.cursoPreviewText}>
+                      • {c.titulo}
+                    </Text>
+                  </View>
                 ))}
                 {cursos.length > 3 && (
                   <Text style={styles.cursoPreviewText}>+ {cursos.length - 3} outros</Text>
