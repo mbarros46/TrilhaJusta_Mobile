@@ -39,10 +39,55 @@ export default function RecomendacoesAIScreen() {
       });
       setRecomendacao(res);
     } catch (err: any) {
-      Alert.alert('Erro', err?.message || 'Não foi possível obter recomendações.');
+      console.error('Erro na IA:', err);
+      const errMsg = err?.message || '';
+      
+      // Se o endpoint não existir ou der erro 404/500, usar recomendação de fallback
+      if (errMsg.includes('404') || errMsg.includes('500') || errMsg.includes('Network') || errMsg.includes('timeout')) {
+        Alert.alert(
+          'IA não disponível',
+          'O serviço de IA não está configurado no backend. Usando recomendações de exemplo.',
+          [
+            { text: 'OK', onPress: () => mostrarRecomendacaoFallback() }
+          ]
+        );
+      } else {
+        Alert.alert('Erro', errMsg || 'Não foi possível obter recomendações.');
+      }
     } finally {
       setLoading(false);
     }
+  }
+
+  function mostrarRecomendacaoFallback() {
+    const recomendacaoDemo = `Baseado no seu perfil, aqui estão algumas recomendações:
+
+🎯 **Trilhas Recomendadas:**
+
+1. **Desenvolvimento Full-Stack**
+   - Duração: 120h
+   - Cursos: React, Node.js, PostgreSQL
+   - Ideal para: ${objetivos || 'transição para desenvolvimento web'}
+
+2. **Análise de Dados**
+   - Duração: 80h
+   - Cursos: Python, SQL, Data Visualization
+   - Aproveita: ${experiencia || 'sua experiência analítica'}
+
+3. **DevOps e Cloud**
+   - Duração: 100h
+   - Cursos: Docker, Kubernetes, AWS
+   - Complementa: suas habilidades técnicas
+
+💡 **Próximos Passos:**
+• Comece pela trilha mais alinhada aos seus objetivos
+• Dedique 2-3h por dia de estudo
+• Pratique com projetos reais
+• Candidate-se a vagas relacionadas
+
+⚠️ **Nota:** Esta é uma recomendação de exemplo. Para recomendações personalizadas por IA, configure o Spring AI no backend.`;
+    
+    setRecomendacao(recomendacaoDemo);
   }
 
   return (
