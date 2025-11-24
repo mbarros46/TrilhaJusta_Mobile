@@ -101,16 +101,11 @@ Próximos passos recomendados
 3. Abrir o app no navegador (`w`) e verificar telas principais (login, trilhas, vagas, perfil, candidaturas).
 4. Atualizar dependências do Expo quando conveniente para alinhar as versões recomendadas.
 
-Contato / Ajuda
+Integrantes do Grupo
 ---------------
-Se quiser, posso:
-- Ajudar a interpretar a saída do `npm run smoke-test` se você colar os logs aqui;
-- Tentar abrir o app no navegador a partir deste ambiente (tenha em mente que abrir o browser precisa ocorrer na sua máquina para você ver);
-- Gerar scripts adicionais ou testes automatizados.
-# TrilhaJusta – Mobile (React Native + Expo)
-
-Aplicativo mobile do projeto **TrilhaJusta**, criado a partir do template utilizado no FleetZone, mas
-integrado ao backend Java Spring Boot (`/api/v1`) do TrilhaJusta.
+ RM556652 -  Miguel Barros - turma 2TDSPG
+ RM555323 - Thomaz Bartol - turma 2TDSPG
+ RM556826 - Pedro Valentim - turma 2TDSPG
 
 ## Stack
 
