@@ -12,6 +12,7 @@ Conteúdo
 - Troubleshooting rápido
 - Notas e próximas ações
 
+
 Visão geral
 ----------
 O app móvel serve como cliente para a API Java (Spring Boot). Funcionalidades chave:
